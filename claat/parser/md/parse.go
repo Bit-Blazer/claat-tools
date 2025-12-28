@@ -923,6 +923,16 @@ func link(ds *docState) nodes.Node {
 		n.Target = v
 	}
 	n.MutateBlock(findNearestBlockAncestor(ds.cur))
+	
+	// Check if the link text starts with "Download " and wrap in a button
+	s := strings.ToLower(stringifyNode(ds.cur, true))
+	if strings.HasPrefix(s, "download ") {
+		btn := nodes.NewButtonNode(true, true, true, parsedChildNodes...)
+		ln := nodes.NewURLNode(href, btn)
+		ln.MutateBlock(findNearestBlockAncestor(ds.cur))
+		return ln
+	}
+	
 	return n
 }
 
