@@ -214,7 +214,7 @@ func (hw *htmlWriter) button(n *nodes.ButtonNode) {
 	}
 	hw.writeString(">")
 	if n.Download {
-		hw.writeString(`<iron-icon icon="file-download"></iron-icon>`)
+		hw.writeString(`<iron-icon class="material-icons">file_download</iron-icon>`)
 	}
 	hw.write(n.Content.Nodes...)
 	hw.writeString("</paper-button>")
