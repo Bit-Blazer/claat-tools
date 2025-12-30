@@ -1,0 +1,6 @@
+# Node modules if using npm scripts
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
