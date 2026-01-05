@@ -23,23 +23,25 @@ A modern, lightweight static catalog for browsing codelabs.
    cd catalog
    ```
 
-3. **Create** a `codelabs` folder inside catalog:
+3. **Create** a `codelabs` folder for source markdown files:
 
    ```bash
    mkdir codelabs
    ```
 
-4. **Write** your codelab markdown files (anywhere you like)
-5. **Export** them into the codelabs folder:
+4. **Write** your codelab markdown files in the `codelabs` folder
+5. **Export** them to the catalog root:
 
    ```bash
-   claat export -o ./codelabs your-tutorial.md
+   cd codelabs
+   claat export -o .. your-tutorial.md
    ```
 
 6. **Build** the index:
 
    ```bash
-   node build-index.js
+   cd ..
+   node build-index.js . codelabs.json
    ```
 
 7. **Serve** the catalog:
@@ -64,26 +66,34 @@ catalog/
 ├── build-index.js     # Index generator script
 ├── codelabs.json      # Generated index file
 ├── README.md          # This file
-└── codelabs/          # Your exported codelabs go here
-    ├── tutorial-1/
-    │   ├── index.html
-    │   └── codelab.json
-    └── tutorial-2/
-        ├── index.html
-        └── codelab.json
+├── tutorial-1/        # Exported codelab (at root for clean URLs)
+│   ├── index.html
+│   └── codelab.json
+├── tutorial-2/        # Exported codelab (at root for clean URLs)
+│   ├── index.html
+│   └── codelab.json
+└── codelabs/          # Source markdown files
+    ├── tutorial-1.md
+    └── tutorial-2.md
 ```
+
+**URL Structure:**
+
+- Catalog homepage: `https://yoursite.com/`
+- Codelab pages: `https://yoursite.com/tutorial-1/`
+- Source files: `https://yoursite.com/codelabs/tutorial-1.md`
 
 ## Build Index Options
 
 ```bash
-# Default: scan ./codelabs, write to codelabs.json
-node build-index.js
+# Scan current directory for exported codelabs, write to codelabs.json
+node build-index.js . codelabs.json
 
-# Custom directories
-node build-index.js /path/to/codelabs output.json
+# Scan specific directory (legacy structure)
+node build-index.js ./codelabs codelabs.json
 
-# Example: scan external directory
-node build-index.js ../my-codelabs codelabs.json
+# Custom output file
+node build-index.js . output.json
 ```
 
 ## Integration with CLAAT
@@ -94,9 +104,13 @@ Add to your build script:
 
 ```bash
 #!/bin/bash
-# Export all markdown files to codelabs directory
-claat export -o ./codelabs *.md
+# Export all markdown files from codelabs/ to root
+cd codelabs
+for file in *.md; do
+  claat export -o .. "$file"
+done
 
 # Rebuild catalog index
-node build-index.js
+cd ..
+node build-index.js . codelabs.json
 ```
