@@ -20,7 +20,6 @@ goog.module('googlecodelabs.CodelabAnalytics');
 const Const = goog.require('goog.string.Const');
 const EventHandler = goog.require('goog.events.EventHandler');
 const TrustedResourceUrl = goog.require('goog.html.TrustedResourceUrl');
-const {safeScriptEl} = goog.require('safevalues.dom');
 
 /**
  * The general codelab action event fired for trackable interactions.
@@ -524,8 +523,8 @@ class CodelabAnalytics extends HTMLElement {
     //       `window[GTAG]('config', ga4Id...`
     //   'l': the namespaced dataLayer used to separate codelabs related GA4
     //       data from other data layers that may exist on a site or page.
-    safeScriptEl.setSrc(
-      gtagScriptElement, TrustedResourceUrl.formatWithParams(
+    gtagScriptElement.src = TrustedResourceUrl.unwrap(
+        TrustedResourceUrl.formatWithParams(
             Const.from('//www.googletagmanager.com/gtag/js'),
             {}, {'id': this.ga4Id_, 'l': CODELAB_DATA_LAYER}));
     firstScriptElement.parentNode.insertBefore(
