@@ -30,16 +30,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/stoewer/go-strcase"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
-	"github.com/stoewer/go-strcase"
 
 	"github.com/googlecodelabs/tools/claat/nodes"
 	"github.com/googlecodelabs/tools/claat/parser"
 	"github.com/googlecodelabs/tools/claat/types"
 	"github.com/googlecodelabs/tools/claat/util"
 	"github.com/yuin/goldmark"
+	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/extension"
+	gmparser "github.com/yuin/goldmark/parser"
 	gmhtml "github.com/yuin/goldmark/renderer/html"
 )
 
@@ -118,7 +120,7 @@ func (p *Parser) Parse(r io.Reader, opts parser.Options) (*types.Codelab, error)
 	if err != nil {
 		return nil, err
 	}
-	b, err = renderToHTML(b)
+	b, metaData, err := renderToHTML(b)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +130,7 @@ func (p *Parser) Parse(r io.Reader, opts parser.Options) (*types.Codelab, error)
 		return nil, err
 	}
 	// Parse the markup.
-	return parseMarkup(doc, opts)
+	return parseMarkup(doc, metaData, opts)
 }
 
 // ParseFragment parses a codelab fragment written in Markdown.
@@ -137,7 +139,7 @@ func (p *Parser) ParseFragment(r io.Reader, opts parser.Options) ([]nodes.Node, 
 	if err != nil {
 		return nil, err
 	}
-	b, err = renderToHTML(b)
+	b, _, err = renderToHTML(b)
 	if err != nil {
 		return nil, err
 	}
@@ -231,24 +233,48 @@ func (ds *docState) appendNodes(nn ...nodes.Node) {
 
 // renderToHTML preprocesses Markdown bytes and then calls a Markdown parser on the Markdown.
 // It takes a raw markdown bytes and outputs parsed xhtml in bytes.
-func renderToHTML(b []byte) ([]byte, error) {
+func renderToHTML(b []byte) ([]byte, map[string]interface{}, error) {
 	b = convertImports(b)
-	gmParser := goldmark.New(goldmark.WithRendererOptions(gmhtml.WithUnsafe()), goldmark.WithExtensions(extension.Typographer, extension.Table, extension.DefinitionList))
+
+	// Create goldmark with meta extension
+	gmParser := goldmark.New(
+		goldmark.WithRendererOptions(gmhtml.WithUnsafe()),
+		goldmark.WithExtensions(
+			extension.Typographer,
+			extension.Table,
+			extension.DefinitionList,
+			meta.Meta,
+		),
+	)
+
+	// Create context to capture metadata
+	ctx := gmparser.NewContext()
 	var out bytes.Buffer
-	if err := gmParser.Convert(b, &out); err != nil {
-		panic(err)
+	if err := gmParser.Convert(b, &out, gmparser.WithContext(ctx)); err != nil {
+		return nil, nil, err
 	}
-	return out.Bytes(), nil
+
+	// Extract metadata from context
+	metaData := meta.Get(ctx)
+
+	return out.Bytes(), metaData, nil
 }
 
 // parseMarkup accepts html nodes to markup created by the Markdown parser. It returns a pointer to a codelab object, or an error if one occurs.
-func parseMarkup(markup *html.Node, opts parser.Options) (*types.Codelab, error) {
+func parseMarkup(markup *html.Node, metaData map[string]interface{}, opts parser.Options) (*types.Codelab, error) {
 	body := findAtom(markup, atom.Body)
 	if body == nil {
 		return nil, fmt.Errorf("document without a body")
 	}
 
 	ds := newDocState()
+
+	// Apply YAML front matter metadata if present
+	if metaData != nil && len(metaData) > 0 {
+		if err := applyMetadataFromMap(metaData, ds.clab, opts); err != nil {
+			return nil, err
+		}
+	}
 
 	for ds.cur = body.FirstChild; ds.cur != nil; ds.cur = ds.cur.NextSibling {
 		switch {
@@ -384,6 +410,39 @@ func newStep(ds *docState) {
 	finalizeStep(ds.step)
 	ds.step = ds.clab.NewStep(t)
 	ds.env = nil
+}
+
+// applyMetadataFromMap converts goldmark-meta map[string]interface{} to string map and applies to codelab.
+func applyMetadataFromMap(metaData map[string]interface{}, c *types.Codelab, opts parser.Options) error {
+	m := make(map[string]string)
+	for k, v := range metaData {
+		// Convert interface{} values to strings
+		switch val := v.(type) {
+		case string:
+			m[k] = val
+		case []interface{}:
+			// Handle arrays (e.g., authors, tags) by joining with commas
+			var strs []string
+			for _, item := range val {
+				if s, ok := item.(string); ok {
+					strs = append(strs, s)
+				}
+			}
+			m[k] = strings.Join(strs, ", ")
+		case int, int64, float64:
+			m[k] = fmt.Sprintf("%v", val)
+		default:
+			// For any other type, use fmt.Sprintf
+			m[k] = fmt.Sprintf("%v", val)
+		}
+	}
+
+	// Check for required id field
+	if _, ok := m["id"]; !ok || m["id"] == "" {
+		return fmt.Errorf("invalid metadata format, missing at least id: %v", m)
+	}
+
+	return addMetadataToCodelab(m, c, opts)
 }
 
 // parseMetadata parses the first <p> of a codelab doc to populate metadata.
@@ -921,7 +980,7 @@ func link(ds *docState) nodes.Node {
 		n.Target = v
 	}
 	n.MutateBlock(findNearestBlockAncestor(ds.cur))
-	
+
 	// Check if the link text starts with "Download " and wrap in a button
 	s := strings.ToLower(stringifyNode(ds.cur, true))
 	if strings.HasPrefix(s, "download ") {
@@ -930,7 +989,7 @@ func link(ds *docState) nodes.Node {
 		ln.MutateBlock(findNearestBlockAncestor(ds.cur))
 		return ln
 	}
-	
+
 	return n
 }
 
@@ -1008,9 +1067,10 @@ func toLowerSlice(a []string) {
 // roundDuration rounds time to the nearest minute, always rounding
 // up when there is any fractional portion of a minute.
 // Ex:
-//  59s --> 1m
-//  60s --> 1m
-//  61s --> 2m
+//
+//	59s --> 1m
+//	60s --> 1m
+//	61s --> 2m
 func roundDuration(d time.Duration) time.Duration {
 	rd := time.Duration(d.Minutes()) * time.Minute
 	if rd < d {

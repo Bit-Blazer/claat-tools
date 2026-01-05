@@ -14,12 +14,14 @@ A minimal codelab requires:
 ## File Structure
 
 ```markdown
+---
 authors: Your Name
 summary: Brief description of what users will learn
 id: unique-codelab-id
 categories: topic1, topic2
 environments: Web
 status: Published
+---
 
 # Your Codelab Title
 
@@ -40,11 +42,11 @@ More content...
 
 ## Metadata
 
-Metadata **must** appear at the top of your file before the title. Each field is on its own line in `key: value` format.
+Metadata **must** appear at the top of your file before the title, wrapped in `---` delimiters (YAML front matter).Each field is on its own line in `key: value` format.
 
 ### Required Fields
 
-```markdown
+```yaml
 id: unique-codelab-identifier
 ```
 
@@ -319,6 +321,7 @@ Use HTML `<form>` elements with these components:
 ## Example Codelab
 
 ````markdown
+---
 authors: Jane Developer
 summary: Learn the basics of creating interactive codelabs
 id: getting-started-with-codelabs
@@ -326,6 +329,7 @@ categories: tutorial,markdown
 environments: Web
 status: Published
 feedback link: https://github.com/example/issues
+---
 
 # Getting Started with Codelabs
 

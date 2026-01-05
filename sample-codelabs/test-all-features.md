@@ -1,3 +1,4 @@
+---
 authors: Test Author, Another Author
 summary: A comprehensive test codelab demonstrating all supported markdown features
 id: test-all-features
@@ -10,6 +11,7 @@ home url: /codelab-tools/
 source: test-source-doc
 duration: 30
 analytics ga4 account: G-4LV2JBSBPM
+---
 
 # Test All Features Codelab
 
