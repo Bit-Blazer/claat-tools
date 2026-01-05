@@ -47,7 +47,7 @@ var (
 	globalGA4    = flag.String("ga4", "G-XXXXXXXXXX", "global Google Analytics 4 account")
 	output       = flag.String("o", ".", "output directory or '-' for stdout")
 	passMetadata = flag.String("pass_metadata", "", "Metadata fields to pass through to the output. Comma-delimited list of field names.")
-	prefix       = flag.String("prefix", "https://storage.googleapis.com", "URL prefix for html format")
+	prefix       = flag.String("prefix", "https://cdn.jsdelivr.net/gh/Bit-Blazer/codelab-tools@main/codelab-elements/build", "URL prefix for html format")
 	tmplout      = flag.String("f", "html", "output format")
 )
 

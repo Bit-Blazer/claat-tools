@@ -69,7 +69,7 @@ claat export -f offline path/to/codelab.md
   - `offline`: Plain HTML for offline consumption
   - Or specify a path to custom Go template file
 - `-e <env>`: Codelab environment (default: `web`)
-- `-prefix <url>`: URL prefix for HTML format (default: `https://storage.googleapis.com`)
+- `-prefix <url>`: URL prefix for HTML format (default: `https://cdn.jsdelivr.net/gh/Bit-Blazer/codelab-tools@main/codelab-elements/build/`)
 - `-ga4 <account>`: Global Google Analytics 4 account (default: `G-XXXXXXXXXX`)
 - `-auth <token>`: OAuth2 Bearer token for Google Drive API
 - `-pass_metadata <fields>`: Comma-delimited list of metadata fields to pass through
