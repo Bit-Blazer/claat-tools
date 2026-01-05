@@ -1,0 +1,66 @@
+name: Deploy Catalog Site
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v6.1.0
+        with:
+          go-version: "1.25"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Build CLaaT
+        working-directory: claat
+        run: |
+          go build -o ../claat-bin ./main.go
+          chmod +x ../claat-bin
+
+      - name: Export codelabs
+        run: |
+          mkdir -p catalog/codelabs
+
+          # Export all markdown files from sample-codelabs
+          for file in sample-codelabs/*.md; do
+            if [ -f "$file" ]; then
+              echo "Exporting $file..."
+              ./claat-bin export -o catalog/codelabs "$file"
+            fi
+          done
+
+          # List exported codelabs
+          echo "Exported codelabs:"
+          ls -la catalog/codelabs/
+
+      - name: Build catalog index
+        working-directory: catalog
+        run: |
+          node build-index.js ./codelabs codelabs.json
+          echo "Catalog index built:"
+          cat codelabs.json
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./catalog
+          publish_branch: gh-pages
+          force_orphan: true

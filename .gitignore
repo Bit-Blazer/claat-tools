@@ -5,3 +5,13 @@ bazel-*
 debug.test
 *pb.go
 node_modules
+
+# Ignore everything under sample-codelabs by default
+sample-codelabs/*
+
+# Allow markdown files at root of sample-codelabs
+!sample-codelabs/*.md
+
+# Allow shared images
+!sample-codelabs/img/
+!sample-codelabs/img/**
