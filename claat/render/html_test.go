@@ -986,17 +986,17 @@ func TestSurvey(t *testing.T) {
 			),
 			out: `<google-codelab-survey survey-id="">
 <h4>pick a number</h4>
-<paper-radio-group>
-<paper-radio-button>1</paper-radio-button>
-<paper-radio-button>2</paper-radio-button>
-<paper-radio-button>3</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>1</radio-button>
+<radio-button>2</radio-button>
+<radio-button>3</radio-button>
+</radio-group>
 <h4>choose an answer</h4>
-<paper-radio-group>
-<paper-radio-button>yes</paper-radio-button>
-<paper-radio-button>no</paper-radio-button>
-<paper-radio-button>probably</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>yes</radio-button>
+<radio-button>no</radio-button>
+<radio-button>probably</radio-button>
+</radio-group>
 </google-codelab-survey>`,
 		},
 		{
@@ -1014,11 +1014,11 @@ func TestSurvey(t *testing.T) {
 				}),
 			out: `<google-codelab-survey survey-id="a simple example">
 <h4>pick a color</h4>
-<paper-radio-group>
-<paper-radio-button>red</paper-radio-button>
-<paper-radio-button>blue</paper-radio-button>
-<paper-radio-button>yellow</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>red</radio-button>
+<radio-button>blue</radio-button>
+<radio-button>yellow</radio-button>
+</radio-group>
 </google-codelab-survey>`,
 		},
 		{
@@ -1038,23 +1038,23 @@ func TestSurvey(t *testing.T) {
 				}),
 			out: `<google-codelab-survey survey-id="an example with multiple survey groups">
 <h4>a</h4>
-<paper-radio-group>
-<paper-radio-button>a</paper-radio-button>
-<paper-radio-button>aa</paper-radio-button>
-<paper-radio-button>aaa</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>a</radio-button>
+<radio-button>aa</radio-button>
+<radio-button>aaa</radio-button>
+</radio-group>
 <h4>b</h4>
-<paper-radio-group>
-<paper-radio-button>b</paper-radio-button>
-<paper-radio-button>bb</paper-radio-button>
-<paper-radio-button>bbb</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>b</radio-button>
+<radio-button>bb</radio-button>
+<radio-button>bbb</radio-button>
+</radio-group>
 <h4>c</h4>
-<paper-radio-group>
-<paper-radio-button>c</paper-radio-button>
-<paper-radio-button>cc</paper-radio-button>
-<paper-radio-button>ccc</paper-radio-button>
-</paper-radio-group>
+<radio-group>
+<radio-button>c</radio-button>
+<radio-button>cc</radio-button>
+<radio-button>ccc</radio-button>
+</radio-group>
 </google-codelab-survey>`,
 		},
 	}

@@ -64,7 +64,7 @@ claat export -f offline path/to/codelab.md
 
 - `-o <dir>`: Output directory (default: current directory). Use `-` for stdout.
 - `-f <format>`: Output format. Built-in formats:
-  - `html` (default): Polymer-based web app
+  - `html` (default): Static HTML files
   - `md`: Markdown format
   - `offline`: Plain HTML for offline consumption
   - Or specify a path to custom Go template file

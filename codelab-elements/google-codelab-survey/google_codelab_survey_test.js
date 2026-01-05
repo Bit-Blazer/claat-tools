@@ -40,15 +40,15 @@ const RADIO_TEXT_CLASS = 'option-text';
 const localStorage = new HTML5LocalStorage();
 const mockControl = new MockControl();
 
-const polymerHtml = '<google-codelab-survey survey-id="test">' +
-  '<h4>Question?</h4><paper-radio-group>' +
-  '<paper-radio-button>Title Text</paper-radio-button>' +
-  '<paper-radio-button>Second Option</paper-radio-button>' +
-  '</paper-radio-group></google-codelab-survey>';
+const html = '<google-codelab-survey survey-id="test">' +
+  '<h4>Question?</h4><radio-group>' +
+  '<radio-button>Title Text</radio-button>' +
+  '<radio-button>Second Option</radio-button>' +
+  '</radio-group></google-codelab-survey>';
 
-const polymerHtmlInvalid = '<google-codelab-survey survey-id="test"><paper-radio-group>' +
-  '<paper-radio-button>Title Text</paper-radio-button>' +
-  '</paper-radio-group></google-codelab-survey>';
+const htmlInvalid = '<google-codelab-survey survey-id="test"><radio-group>' +
+  '<radio-button>Title Text</radio-button>' +
+  '</radio-group></google-codelab-survey>';
 
 testSuite({
 
@@ -57,7 +57,7 @@ testSuite({
       localStorage.clear();
     }
     div = document.createElement('div');
-    div.innerHTML = polymerHtml;
+    div.innerHTML = html;
   },
 
   tearDown() {
@@ -85,7 +85,7 @@ testSuite({
   },
 
   testCodelabSurveyIncorrectFormatNotUpgraded() {
-    div.innerHTML = polymerHtmlInvalid;
+    div.innerHTML = htmlInvalid;
     document.body.appendChild(div);
     const radioInputEl = div.querySelector('input#title-text');
     const radioLabelEl = div.querySelector('label#title-text-label');

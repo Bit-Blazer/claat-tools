@@ -150,7 +150,7 @@ to the format specified with -f option.
 
 The following formats are built-in:
 
-- html (Polymer-based app)
+- html (Static HTML file)
 - md (Markdown)
 - offline (plain HTML markup for offline consumption)
 

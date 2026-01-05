@@ -328,11 +328,11 @@ func (hw *htmlWriter) infobox(n *nodes.InfoboxNode) {
 func (hw *htmlWriter) survey(n *nodes.SurveyNode) {
 	hw.writeFmt("<google-codelab-survey survey-id=%q>\n", n.ID)
 	for _, g := range n.Groups {
-		hw.writeFmt("<h4>%s</h4>\n<paper-radio-group>\n", g.Name)
+		hw.writeFmt("<h4>%s</h4>\n<radio-group>\n", g.Name)
 		for _, o := range g.Options {
-			hw.writeFmt("<paper-radio-button>%s</paper-radio-button>\n", escape(o))
+			hw.writeFmt("<radio-button>%s</radio-button>\n", escape(o))
 		}
-		hw.writeString("</paper-radio-group>\n")
+		hw.writeString("</radio-group>\n")
 	}
 	hw.writeString("</google-codelab-survey>")
 }

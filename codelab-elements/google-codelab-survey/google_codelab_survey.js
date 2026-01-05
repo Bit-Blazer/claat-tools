@@ -161,16 +161,16 @@ class CodelabSurvey extends HTMLElement {
 
   /** @private */
   updateDom_() {
-    const radioGroupEls = this.querySelectorAll('paper-radio-group');
+    const radioGroupEls = this.querySelectorAll('radio-group');
     const questionEls = this.querySelectorAll('h4');
     const surveyQuestions = [];
     if (radioGroupEls.length && (questionEls.length == radioGroupEls.length)) {
       radioGroupEls.forEach((radioGroupEl, index) => {
         const surveyOptions = [];
-        const polymerRadioEls = radioGroupEl.querySelectorAll(
-          'paper-radio-button');
+        const RadioEls = radioGroupEl.querySelectorAll(
+          'radio-button');
         dom.removeNode(radioGroupEl);
-        polymerRadioEls.forEach(radioEl => {
+        RadioEls.forEach(radioEl => {
           const title = radioEl.textContent;
           surveyOptions.push({
             radioId: this.normalizeIdAttr_(questionEls[index].textContent, title),
