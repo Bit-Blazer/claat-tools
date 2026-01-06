@@ -1,0 +1,29 @@
+{
+  "name": "gdoc-codelab-addon",
+  "version": "1.0.0",
+  "description": "Google Docs Add-on for easy codelab authoring with claat format compliance",
+  "scripts": {
+    "login": "clasp login",
+    "create": "clasp create --type standalone --title \"Codelab Format Tools\"",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "open": "clasp open-script",
+    "deploy": "clasp deploy",
+    "deployments": "clasp deployments",
+    "version": "clasp version",
+    "versions": "clasp versions"
+  },
+  "keywords": [
+    "google-apps-script",
+    "codelab",
+    "claat",
+    "google-docs",
+    "add-on"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@google/clasp": "^3.1.3",
+    "@types/google-apps-script": "^1.0.83"
+  }
+}
