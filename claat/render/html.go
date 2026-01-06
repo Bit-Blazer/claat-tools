@@ -144,8 +144,6 @@ func (hw *htmlWriter) writeEscape(s string) {
 }
 
 func (hw *htmlWriter) text(n *nodes.TextNode) {
-	s := n.Value
-	shouldEsc := true
 	if n.Bold {
 		hw.writeString("<strong>")
 	}
@@ -154,13 +152,11 @@ func (hw *htmlWriter) text(n *nodes.TextNode) {
 	}
 	if n.Code {
 		hw.writeString("<code>")
-		shouldEsc = false
 	}
-	if shouldEsc {
-		s = htmlTemplate.HTMLEscapeString(n.Value)
-		// Remove whitespace we added to divide adjacent bold and italic nodes.
-		s = strings.Trim(s, string('\uFEFF'))
-	}
+	// Always escape HTML entities
+	s := htmlTemplate.HTMLEscapeString(n.Value)
+	// Remove whitespace we added to divide adjacent bold and italic nodes.
+	s = strings.Trim(s, string('\uFEFF'))
 	s = ReplaceDoubleCurlyBracketsWithEntity(s)
 	hw.writeString(strings.Replace(s, "\n", "<br>", -1))
 	if n.Code {
